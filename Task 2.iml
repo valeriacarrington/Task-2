@@ -1,8 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<module type="PYTHON_MODULE" version="4">
-  <component name="NewModuleRootManager">
-    <content url="file://$MODULE_DIR$" />
-    <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-</module>
+import random
+
+class Cell:
+    def __init__(self):
+        self.is_road = False
+        self.is_wall = True
+
+def generate_maze(rows, cols):
+    maze = [[Cell() for _ in range(cols)] for _ in range(rows)]
+    stack = [(0, 0)]
+
+    while stack:
+        row, col = stack.pop()
+        maze[row][col].is_road = True
+        directions = random.sample([(0, 1), (1, 0), (0, -1), (-1, 0)], 4)
+        
+        for dr, dc in directions:
+            new_row, new_col = row + dr, col + dc
+            if 0 <= new_row < rows and 0 <= new_col < cols and maze[new_row][new_col].is_wall:
+                maze[new_row][new_col].is_wall = False
+                stack.append((new_row, new_col))
+
+    maze[0][0].is_road = True  # Entrance
+    maze[rows - 1][cols - 1].is_road = True  # Exit
+
+    return maze
+
+def print_maze(maze):
+    for row in maze:
+        for cell in row:
+            if cell.is_road:
+                print(" ", end=" ")
+            else:
+                print("#", end=" ")
+        print()
+
+# Example usage
+maze_size = 10
+maze = generate_maze(maze_size, maze_size)
+print_maze(maze)
